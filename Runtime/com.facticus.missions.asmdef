@@ -1,0 +1,21 @@
+{
+    "name": "com.facticus.missions",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9a39c7c1d520150448787a6d647f2868",
+        "GUID:c35c6d9084ba1a541868fbd8c50a585a",
+        "GUID:49b49c76ee64f6b41bf28ef951cb0e50",
+        "GUID:11a2306c728a4b843a652ec6c2f142bc",
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,7 +1,10 @@
 {
-    "name": "com.{{COMPANY}}.{{REPOSITORY_NAME}}",
+    "name": "com.facticus.missions.Editor",
+    "rootNamespace": "",
     "references": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

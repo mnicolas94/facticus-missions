@@ -1,6 +1,6 @@
-# {{FRIENDLY_NAME}}
+# Missions
 
-{{DESCRIPTION}}
+Simple missions library
 
 ## License
 

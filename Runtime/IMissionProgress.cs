@@ -7,7 +7,7 @@ namespace Missions
     {
         float GetCurrentProgress();
         float GetMaxProgress();
-        void AddProgressChangedCallback(Action callback);
+        Action OnProgressChanged { get; set; }
     }
 
     public static class IMissionProgressExtensions

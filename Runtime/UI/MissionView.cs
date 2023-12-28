@@ -70,7 +70,7 @@ namespace Missions.UI
                 if (model is IMissionProgress missionProgress)
                 {
                     _progress.SetActive(true);
-                    missionProgress.AddProgressChangedCallback(() => UpdateProgress(missionProgress));
+                    missionProgress.OnProgressChanged += () => UpdateProgress(missionProgress);
                     UpdateProgress(missionProgress);
                 }
                 else

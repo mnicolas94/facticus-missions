@@ -21,13 +21,14 @@ namespace Missions
         /// <summary>
         /// Start tracking mission completion condition.
         /// </summary>
-        /// <param name="onCompleted"></param>
-        void StartMission(Action onCompleted);
+        void StartMission();
         
         /// <summary>
         /// Stop tracking mission completion condition.
         /// </summary>
         void EndMission();
+
+        Action OnCompleted { get; set; }
 
         IMission Clone();
     }

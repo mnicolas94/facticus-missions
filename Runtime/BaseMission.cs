@@ -29,8 +29,10 @@ namespace Missions
 
         public abstract void Initialize();
 
-        public abstract void StartMission(Action onCompleted);
+        public abstract void StartMission();
 
         public abstract void EndMission();
+        
+        public Action OnCompleted { get; set; }
     }
 }

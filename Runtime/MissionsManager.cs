@@ -75,7 +75,8 @@ namespace Missions
 
         private void StartMission(IMission mission)
         {
-            mission.StartMission(() => CompleteMission(mission));
+            mission.StartMission();
+            mission.OnCompleted += () => CompleteMission(mission);
         }
 
         private void CompleteMission(IMission mission)

@@ -20,5 +20,12 @@
     "type": "git",
     "url": "https://github.com/mnicolas94/facticus-missions.git"
   },
+  "samples": [
+    {
+      "displayName": "Prefabs Samples",
+      "description": "Contains prefab samples for mission views",
+      "path": "Samples/"
+    }
+  ],
   "license": "MIT"
 }

@@ -24,7 +24,22 @@
     {
       "displayName": "Prefabs Samples",
       "description": "Contains prefab samples for mission views",
-      "path": "Samples/"
+      "path": "Samples"
+    },
+    {
+      "displayName": "Samples 1",
+      "description": "",
+      "path": "Samples/Sample1"
+    },
+    {
+      "displayName": "Samples 1 hidden",
+      "description": "",
+      "path": "Samples~/Sample1"
+    },
+    {
+      "displayName": "Samples general hidden",
+      "description": "",
+      "path": "Samples~"
     }
   ],
   "license": "MIT"

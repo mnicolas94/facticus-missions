@@ -12,7 +12,7 @@ namespace Missions.UI
     public class MissionView : ViewBaseBehaviour<IMission>
     {
         [SerializeField] private LocalizeStringEvent _descriptionText;
-        [SerializeField] private MultiViewDelegate _rewardView;
+        [SerializeField] private GenericView _rewardView;
         [SerializeField] private GameObject _progress;
         [SerializeField] private TextMeshProUGUI _progressText;
         [SerializeField] private RectTransform _progressBar;

@@ -8,7 +8,7 @@ namespace Missions
     [CreateAssetMenu(fileName = "MissionsScriptableObjectList", menuName = "Facticus/Missions/Missions SO list", order = 0)]
     public class MissionsScriptableObjectList : ScriptableObject, IList<MissionScriptableObject> 
     {
-        [SerializeReference] private List<MissionScriptableObject> _missions;
+        [SerializeField] private List<MissionScriptableObject> _missions;
 
         public Action<MissionScriptableObject> Added;
         public Action<MissionScriptableObject> Removed;

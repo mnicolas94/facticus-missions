@@ -16,11 +16,12 @@ namespace Missions.UI
             InitializeFirstMissions();
             _missionsList.Added += AddMissionView;
             _missionsList.Removed += RemoveMissionView;
+            _missionsList.Cleared += ClearMissions;
         }
 
         private void InitializeFirstMissions()
         {
-            _viewList.PopulateModels(_missionsList.Cast<object>().ToList());
+            _viewList.PopulateModels(_missionsList);
         }
 
         private void AddMissionView(IMission mission)
@@ -31,6 +32,11 @@ namespace Missions.UI
         private void RemoveMissionView(IMission mission)
         {
             _viewList.Remove(mission);
+        }
+
+        private void ClearMissions()
+        {
+            _viewList.Clear();
         }
     }
 }

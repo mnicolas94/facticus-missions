@@ -8,10 +8,13 @@ namespace Missions
     public class MissionsManager : MonoBehaviour
     {
         [SerializeField] private MissionsSerializableList _currentMissions;
+        public MissionsSerializableList CurrentMissions => _currentMissions;
+
         [SerializeField] private MissionsScriptableObjectList _missionsPool;
 
         [SerializeField] private SerializableValueCallback<int> _maxMissions;
         [SerializeField] private SerializableValueCallback<bool> _canCreateMission;
+        [SerializeField] private bool _createNewOnCompleted;
 
         [SerializeField] private UnityEvent _onMissionCompleted;
         public UnityEvent OnMissionCompleted => _onMissionCompleted;
@@ -57,7 +60,7 @@ namespace Missions
         private bool TryCreateNewMission()
         {
             return TryCreateNewMission(out var _);
-        }   
+        }
 
         private bool TryCreateNewMission(out IMission mission)
         {
@@ -87,7 +90,7 @@ namespace Missions
             _onMissionCompletedWithArg.Invoke(mission);
             
             _currentMissions.Remove(mission);
-            if (TryCreateNewMission(out var newMission))
+            if (_createNewOnCompleted && TryCreateNewMission(out var newMission))
             {
                 StartMission(newMission);
             }

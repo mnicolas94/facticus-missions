@@ -6,12 +6,25 @@ using UnityEngine;
 namespace Missions
 {
     [CreateAssetMenu(fileName = "MissionsList", menuName = "Facticus/Missions/Missions list", order = 0)]
-    public class MissionsSerializableList : ScriptableObject, IList<IMission> 
+    public class MissionsSerializableList : ScriptableObject, IList<IMission>
     {
+        [SerializeField] private string _lastRefreshTime;
+        public string LastRefreshTime => _lastRefreshTime;
+
         [SerializeReference] private List<IMission> _missions = new();
 
         public Action<IMission> Added;
+        /// <summary>
+        /// Invoked when a mission is removed from the list. Won't be invoked when the list is cleared, use the
+        /// Cleared event instead.
+        /// </summary>
         public Action<IMission> Removed;
+        public Action Cleared;
+
+        public void UpdateRefreshTime()
+        {
+            _lastRefreshTime = DateTime.UtcNow.ToString("o");
+        }
         
         public IEnumerator<IMission> GetEnumerator()
         {
@@ -32,12 +45,8 @@ namespace Missions
 
         public void Clear()
         {
-            var temp = new List<IMission>(_missions);
             _missions.Clear();
-            foreach (var mission in temp)
-            {
-                Removed?.Invoke(mission);
-            }
+            Cleared?.Invoke();
         }
 
         public bool Contains(IMission item)

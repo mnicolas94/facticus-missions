@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Properties;
 using UnityEngine;
 
 namespace Missions
 {
+    [GeneratePropertyBag]
     [CreateAssetMenu(fileName = "MissionsList", menuName = "Facticus/Missions/Missions list", order = 0)]
-    public class MissionsSerializableList : ScriptableObject, IList<IMission>
+    public partial class MissionsSerializableList : ScriptableObject, IList<IMission>
     {
         [SerializeField] private string _lastRefreshTime;
         public string LastRefreshTime => _lastRefreshTime;
 
         [SerializeReference] private List<IMission> _missions = new();
 
-        public Action<IMission> Added;
+        [DontCreateProperty] public Action<IMission> Added;
         /// <summary>
         /// Invoked when a mission is removed from the list. Won't be invoked when the list is cleared, use the
         /// Cleared event instead.
         /// </summary>
-        public Action<IMission> Removed;
-        public Action Cleared;
+        [DontCreateProperty] public Action<IMission> Removed;
+        [DontCreateProperty] public Action Cleared;
 
         public void UpdateRefreshTime()
         {

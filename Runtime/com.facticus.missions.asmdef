@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "GUID:9a39c7c1d520150448787a6d647f2868",
+        "GUID:5f5853784b75c8e428d4bb8bfff666dc",
         "GUID:c35c6d9084ba1a541868fbd8c50a585a",
         "GUID:49b49c76ee64f6b41bf28ef951cb0e50",
         "GUID:11a2306c728a4b843a652ec6c2f142bc",
@@ -16,6 +17,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.facticus.savesystem",
+            "expression": "0.6.9",
+            "define": "ENABLED_SAVESYSTEM"
+        }
+    ],
     "noEngineReferences": false
 }

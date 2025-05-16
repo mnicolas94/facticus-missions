@@ -86,6 +86,7 @@ namespace Missions.UI
 
         private async Task PlayAnimation(SerializableCallback<CancellationToken, Task> animation)
         {
+            if (!animation.Target) return;
             await animation.Invoke(_cts.Token);
         }
 

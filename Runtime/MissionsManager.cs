@@ -16,12 +16,34 @@ namespace Missions
         [SerializeField] private SerializableValueCallback<bool> _canCreateMission;
         [SerializeField] private bool _createNewOnCompleted;
 
+        enum StartMissionsMode
+        {
+            Awake, Start, MethodCall
+        }
+        [SerializeField] private StartMissionsMode _startMissionsMode = StartMissionsMode.MethodCall;
+
         [SerializeField] private UnityEvent _onMissionCompleted;
         public UnityEvent OnMissionCompleted => _onMissionCompleted;
         
         [SerializeField] private UnityEvent<IMission> _onMissionCompletedWithArg;
         public UnityEvent<IMission> OnMissionCompletedWithArg => _onMissionCompletedWithArg;
 
+        private void Awake()
+        {
+            if (_startMissionsMode == StartMissionsMode.Awake)
+            {
+                StartMissions();
+            }
+        }
+        
+        private void Start()
+        {
+            if (_startMissionsMode == StartMissionsMode.Start)
+            {
+                StartMissions();
+            }
+        }
+        
         public void ClearMissions()
         {
             foreach (var currentMission in _currentMissions)

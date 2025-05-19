@@ -1,7 +1,10 @@
 {
     "name": "com.facticus.missions.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:33231c046d81b5c44bdbf6bc2eda400a",
+        "GUID:87f0d0b9a8d159a4c94e89b339e4604a"
+    ],
     "includePlatforms": [
         "Editor"
     ],

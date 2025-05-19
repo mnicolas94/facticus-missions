@@ -29,24 +29,6 @@ namespace Missions.UI
             return true;
         }
 
-        private CancellationTokenSource _cts;
-
-        private void OnEnable()
-        {
-            _cts = new CancellationTokenSource();
-        }
-
-        private void OnDisable()
-        {
-            if (!_cts.IsCancellationRequested)
-            {
-                _cts.Cancel();
-            }
-
-            _cts.Dispose();
-            _cts = null;
-        }
-
         public override void Initialize(IMission model)
         {
             UpdateView(model);
@@ -54,13 +36,13 @@ namespace Missions.UI
 
         public override async void UpdateView(IMission model)
         {
-            var ct = _cts.Token;
+            var ct = destroyCancellationToken;
             await WaitPreviousUpdate(ct);
             _updatingView = true;
             
             if (model == null)
             {
-                await PlayAnimation(_hideAnimation);
+                await PlayAnimation(_hideAnimation, ct);
             }
             else
             {
@@ -78,16 +60,16 @@ namespace Missions.UI
                     _progress.SetActive(false);
                 }
                 
-                await PlayAnimation(_showAnimation);
+                await PlayAnimation(_showAnimation, ct);
             }
             
             _updatingView = false;
         }
 
-        private async Task PlayAnimation(SerializableCallback<CancellationToken, Task> animation)
+        private async Task PlayAnimation(SerializableCallback<CancellationToken, Task> animation, CancellationToken ct)
         {
             if (!animation.Target) return;
-            await animation.Invoke(_cts.Token);
+            await animation.Invoke(ct);
         }
 
         private async Task WaitPreviousUpdate(CancellationToken ct)

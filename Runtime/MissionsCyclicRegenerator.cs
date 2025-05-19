@@ -11,9 +11,9 @@ namespace Missions
     public class MissionsCyclicRegenerator : MonoBehaviour
     {
         [SerializeField, AutoProperty] private MissionsManager _missionsManager;
-        [SerializeField] private SerializableTimeSpan _timeInterval;
         [SerializeField] private float _firstCheckDelay;
         [SerializeField] private float _checkRefreshCooldown;
+        [SerializeField] private SerializableTimeSpan _timeInterval;
 
         private void Start()
         {

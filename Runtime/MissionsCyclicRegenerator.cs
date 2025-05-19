@@ -12,11 +12,12 @@ namespace Missions
     {
         [SerializeField, AutoProperty] private MissionsManager _missionsManager;
         [SerializeField] private SerializableTimeSpan _timeInterval;
+        [SerializeField] private float _firstCheckDelay;
         [SerializeField] private float _checkRefreshCooldown;
 
         private void Start()
         {
-            InvokeRepeating(nameof(CheckTimeInterval), _checkRefreshCooldown, _checkRefreshCooldown);
+            InvokeRepeating(nameof(CheckTimeInterval), _firstCheckDelay, _checkRefreshCooldown);
         }
 
         private void CheckTimeInterval()

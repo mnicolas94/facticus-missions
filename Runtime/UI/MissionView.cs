@@ -21,8 +21,22 @@ namespace Missions.UI
         [SerializeField] private SerializableCallback<CancellationToken, Task> _hideAnimation;
 
         private bool _updatingView;
-
+        private IMissionProgress _missionProgress;
+        
         public bool HasModel => _model != null;
+
+        private void OnDisable()
+        {
+            UnregisterProgressListener();
+        }
+
+        private void UnregisterProgressListener()
+        {
+            if (_missionProgress != null)
+            {
+                _missionProgress.OnProgressChanged -= UpdateProgress;
+            }
+        }
 
         public override bool CanRenderModel(IMission model)
         {
@@ -49,10 +63,12 @@ namespace Missions.UI
                 _descriptionText.StringReference = model.GetDescription();
                 _rewardView.Initialize(model.GetReward());
 
+                UnregisterProgressListener();
                 if (model is IMissionProgress missionProgress)
                 {
                     _progress.SetActive(true);
-                    missionProgress.OnProgressChanged += () => UpdateProgress(missionProgress);
+                    _missionProgress = missionProgress;
+                    missionProgress.OnProgressChanged += UpdateProgress;
                     UpdateProgress(missionProgress);
                 }
                 else
@@ -80,6 +96,11 @@ namespace Missions.UI
             }
         }
 
+        private void UpdateProgress()
+        {
+            UpdateProgress(_missionProgress);
+        }
+        
         private void UpdateProgress(IMissionProgress mission)
         {
             var current = mission.GetCurrentProgress();

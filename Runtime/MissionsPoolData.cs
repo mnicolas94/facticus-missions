@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Utils.Serializables;
+
+namespace Missions
+{
+    [CreateAssetMenu(fileName = "MissionsPoolData", menuName = "Facticus/Missions/MissionsPoolData", order = 0)]
+    public class MissionsPoolData : ScriptableObject
+    {
+        [SerializeField] private List<MissionScriptableObject> _missions;
+        public List<MissionScriptableObject> Missions => _missions;
+        
+        [SerializeField] private SerializableTimeSpan _refreshTimeSpan;
+        public SerializableTimeSpan RefreshTimeSpan => _refreshTimeSpan;
+
+        public static int SecondsToNextRefresh(MissionsPoolData missionsData, MissionsSerializableState persistedData)
+        {
+            var serializedTime = persistedData.LastRefreshTime;
+            var lastRefresh = DateTime.TryParse(serializedTime, out var parsed) ? parsed : DateTime.MinValue;
+            return missionsData.RefreshTimeSpan.ToSeconds() - (int)(DateTime.UtcNow - lastRefresh).TotalSeconds;
+        }
+    }
+}

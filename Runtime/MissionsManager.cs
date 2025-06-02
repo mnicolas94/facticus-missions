@@ -7,10 +7,11 @@ namespace Missions
 {
     public class MissionsManager : MonoBehaviour
     {
-        [SerializeField] private MissionsSerializableList _currentMissions;
-        public MissionsSerializableList CurrentMissions => _currentMissions;
+        [SerializeField] private MissionsSerializableState _currentMissions;
+        public MissionsSerializableState CurrentMissions => _currentMissions;
 
-        [SerializeField] private MissionsScriptableObjectList _missionsPool;
+        [SerializeField] private MissionsPoolData _missionsPool;
+        public MissionsPoolData MissionsPool => _missionsPool;
 
         [SerializeField] private SerializableValueCallback<int> _maxMissions;
         [SerializeField] private SerializableValueCallback<bool> _canCreateMission;
@@ -88,7 +89,7 @@ namespace Missions
         {
             if (_canCreateMission.Value)
             {
-                mission = _missionsPool.GetRandom().Mission.Clone();
+                mission = _missionsPool.Missions.GetRandom().Mission.Clone();
                 mission.Initialize();
                 _currentMissions.Add(mission);
                 return true;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ModelView;
 using UnityEngine;
 
@@ -8,7 +6,7 @@ namespace Missions.UI
 {
     public class MissionsUI : MonoBehaviour
     {
-        [SerializeField] private MissionsSerializableList _missionsList;
+        [SerializeField] private MissionsSerializableState _missionsList;
         [SerializeField] private ViewList _viewList;
 
         private void Start()

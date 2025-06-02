@@ -7,8 +7,8 @@ using UnityEngine;
 namespace Missions
 {
     [GeneratePropertyBag]
-    [CreateAssetMenu(fileName = "MissionsList", menuName = "Facticus/Missions/Missions list", order = 0)]
-    public partial class MissionsSerializableList : ScriptableObject, IList<IMission>
+    [CreateAssetMenu(fileName = "MissionsSerializableState", menuName = "Facticus/Missions/Missions serializable state", order = 0)]
+    public partial class MissionsSerializableState : ScriptableObject, IList<IMission>
     {
         [SerializeField] private string _lastRefreshTime;
         public string LastRefreshTime => _lastRefreshTime;

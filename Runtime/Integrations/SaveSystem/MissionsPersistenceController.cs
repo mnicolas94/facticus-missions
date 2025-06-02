@@ -7,7 +7,7 @@ namespace Missions.Integrations.SaveSystem
 {
     public class MissionsPersistenceController : MonoBehaviour
     {
-        [SerializeField] private List<MissionsSerializableList> _missionsLists;
+        [SerializeField] private List<MissionsSerializableState> _missionsLists;
 
         private readonly List<MissionSaver> _savers = new();
         
@@ -30,9 +30,9 @@ namespace Missions.Integrations.SaveSystem
 
     public struct MissionSaver
     {
-        private readonly MissionsSerializableList _missionsList;
+        private readonly MissionsSerializableState _missionsList;
 
-        public MissionSaver(MissionsSerializableList missionsList)
+        public MissionSaver(MissionsSerializableState missionsList)
         {
             _missionsList = missionsList;
             _missionsList.Added += SaveList;

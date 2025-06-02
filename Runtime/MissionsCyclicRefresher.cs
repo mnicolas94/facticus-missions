@@ -6,14 +6,13 @@ using Utils.Serializables;
 namespace Missions
 {
     /// <summary>
-    /// Will regenerate missions in a cyclic way (e.g. daily or weekly)
+    /// Will refresh missions in a cyclic way (e.g. daily or weekly)
     /// </summary>
-    public class MissionsCyclicRegenerator : MonoBehaviour
+    public class MissionsCyclicRefresher : MonoBehaviour
     {
         [SerializeField, AutoProperty] private MissionsManager _missionsManager;
         [SerializeField] private float _firstCheckDelay;
         [SerializeField] private float _checkRefreshCooldown;
-        [SerializeField] private SerializableTimeSpan _timeInterval;
 
         private void Start()
         {
@@ -22,10 +21,9 @@ namespace Missions
 
         private void CheckTimeInterval()
         {
-            var now = DateTime.UtcNow;
-            var lastRefresh = GetLastRefresh();
-            var difference = now - lastRefresh;
-            var needRefresh = difference.TotalSeconds >= _timeInterval.ToSeconds();
+            var secondsToNextRefresh = MissionsPoolData.SecondsToNextRefresh(_missionsManager.MissionsPool,
+                _missionsManager.CurrentMissions);
+            var needRefresh = secondsToNextRefresh <= 0;
 
             if (needRefresh)
             {
@@ -34,12 +32,6 @@ namespace Missions
                 _missionsManager.EnsureMaxMission();
                 _missionsManager.StartMissions();
             }
-        }
-
-        private DateTime GetLastRefresh()
-        {
-            var serializedTime = _missionsManager.CurrentMissions.LastRefreshTime;
-            return DateTime.TryParse(serializedTime, out var parsed) ? parsed : DateTime.MinValue;
         }
     }
 }

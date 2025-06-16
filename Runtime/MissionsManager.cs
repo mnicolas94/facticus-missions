@@ -90,8 +90,8 @@ namespace Missions
             if (_canCreateMission.Value)
             {
                 mission = _missionsPool.Missions.GetRandom().Mission.Clone();
-                mission.Initialize();
                 _currentMissions.Add(mission);
+                mission.Initialize();
                 return true;
             }
 

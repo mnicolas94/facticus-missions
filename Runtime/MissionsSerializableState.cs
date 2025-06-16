@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Unity.Properties;
 using UnityEngine;
 
@@ -8,12 +8,13 @@ namespace Missions
 {
     [GeneratePropertyBag]
     [CreateAssetMenu(fileName = "MissionsSerializableState", menuName = "Facticus/Missions/Missions serializable state", order = 0)]
-    public partial class MissionsSerializableState : ScriptableObject, IList<IMission>
+    public partial class MissionsSerializableState : ScriptableObject
     {
         [SerializeField] private string _lastRefreshTime;
         public string LastRefreshTime => _lastRefreshTime;
 
         [SerializeReference] private List<IMission> _missions = new();
+        public ReadOnlyCollection<IMission> Missions => _missions.AsReadOnly();
 
         [DontCreateProperty] public Action<IMission> Added;
         /// <summary>
@@ -28,17 +29,6 @@ namespace Missions
             _lastRefreshTime = DateTime.UtcNow.ToString("o");
         }
         
-        public IEnumerator<IMission> GetEnumerator()
-        {
-            _missions ??= new List<IMission>();
-            return _missions.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_missions).GetEnumerator();
-        }
-
         public void Add(IMission item)
         {
             _missions.Add(item);
@@ -51,16 +41,6 @@ namespace Missions
             Cleared?.Invoke();
         }
 
-        public bool Contains(IMission item)
-        {
-            return _missions.Contains(item);
-        }
-
-        public void CopyTo(IMission[] array, int arrayIndex)
-        {
-            _missions.CopyTo(array, arrayIndex);
-        }
-
         public bool Remove(IMission item)
         {
             var result = _missions.Remove(item);
@@ -69,34 +49,6 @@ namespace Missions
                 Removed?.Invoke(item);
             }
             return result;
-        }
-
-        public int Count => _missions.Count;
-
-        public bool IsReadOnly => ((ICollection<IMission>)_missions).IsReadOnly;
-
-        public int IndexOf(IMission item)
-        {
-            return _missions.IndexOf(item);
-        }
-
-        public void Insert(int index, IMission item)
-        {
-            _missions.Insert(index, item);
-            Added?.Invoke(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            var item = _missions[index];
-            _missions.RemoveAt(index);
-            Removed?.Invoke(item);
-        }
-
-        public IMission this[int index]
-        {
-            get => _missions[index];
-            set => _missions[index] = value;
         }
     }
 }

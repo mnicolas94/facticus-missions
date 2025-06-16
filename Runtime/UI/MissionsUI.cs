@@ -19,7 +19,7 @@ namespace Missions.UI
 
         private void InitializeFirstMissions()
         {
-            _viewList.PopulateModels(_missionsList);
+            _viewList.PopulateModels(_missionsList.Missions);
         }
 
         private void AddMissionView(IMission mission)

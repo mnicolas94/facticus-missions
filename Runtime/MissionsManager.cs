@@ -47,7 +47,7 @@ namespace Missions
         
         public void ClearMissions()
         {
-            foreach (var currentMission in _currentMissions)
+            foreach (var currentMission in _currentMissions.Missions)
             {
                 currentMission.EndMission();
             }
@@ -60,13 +60,13 @@ namespace Missions
         /// </summary>
         public void EnsureMaxMission()
         {
-            var missing = _maxMissions.Value - _currentMissions.Count;
+            var missing = _maxMissions.Value - _currentMissions.Missions.Count;
             CreateNewMissions(missing);
         }
 
         public void StartMissions()
         {
-            foreach (var mission in _currentMissions)
+            foreach (var mission in _currentMissions.Missions)
             {
                 StartMission(mission);
             }

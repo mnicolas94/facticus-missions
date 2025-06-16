@@ -44,6 +44,7 @@ namespace Missions.Integrations.SaveSystem
         {
             _missionsList.Added -= SaveList;
             _missionsList.Removed -= SaveList;
+            _missionsList.Cleared -= SaveList;
         }
 
         private void SaveList(IMission _)

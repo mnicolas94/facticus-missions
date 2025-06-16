@@ -47,7 +47,7 @@ namespace Missions.Integrations.SaveSystem
             _missionsList.Cleared -= SaveList;
         }
 
-        private void SaveList(IMission _)
+        private void SaveList(MissionData _)
         {
             SaveList();
         }

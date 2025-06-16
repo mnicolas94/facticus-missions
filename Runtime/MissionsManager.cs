@@ -26,8 +26,8 @@ namespace Missions
         [SerializeField] private UnityEvent _onMissionCompleted;
         public UnityEvent OnMissionCompleted => _onMissionCompleted;
         
-        [SerializeField] private UnityEvent<IMission> _onMissionCompletedWithArg;
-        public UnityEvent<IMission> OnMissionCompletedWithArg => _onMissionCompletedWithArg;
+        [SerializeField] private UnityEvent<MissionData> _onMissionCompletedWithArg;
+        public UnityEvent<MissionData> OnMissionCompletedWithArg => _onMissionCompletedWithArg;
 
         private void Awake()
         {
@@ -49,7 +49,7 @@ namespace Missions
         {
             foreach (var currentMission in _currentMissions.Missions)
             {
-                currentMission.EndMission();
+                currentMission.Mission.EndMission();
             }
 
             _currentMissions.Clear();
@@ -85,11 +85,11 @@ namespace Missions
             return TryCreateNewMission(out var _);
         }
 
-        private bool TryCreateNewMission(out IMission mission)
+        private bool TryCreateNewMission(out MissionData mission)
         {
             if (_canCreateMission.Value)
             {
-                mission = _missionsPool.Missions.GetRandom().Mission.Clone();
+                mission = _missionsPool.Missions.GetRandom().Clone();
                 _currentMissions.Add(mission);
                 mission.Initialize();
                 return true;
@@ -99,13 +99,13 @@ namespace Missions
             return false;
         }
 
-        private void StartMission(IMission mission)
+        private void StartMission(MissionData mission)
         {
             mission.StartMission();
             mission.OnCompleted += () => CompleteMission(mission);
         }
 
-        private void CompleteMission(IMission mission)
+        private void CompleteMission(MissionData mission)
         {
             mission.EndMission();
             mission.GetReward().ApplyReward();

@@ -9,7 +9,7 @@ using UnityEngine.Localization.Components;
 
 namespace Missions.UI
 {
-    public class MissionView : ViewBaseBehaviour<IMission>
+    public class MissionView : ViewBaseBehaviour<MissionData>
     {
         [SerializeField] private LocalizeStringEvent _descriptionText;
         [SerializeField] private GenericView _rewardView;
@@ -38,17 +38,17 @@ namespace Missions.UI
             }
         }
 
-        public override bool CanRenderModel(IMission model)
+        public override bool CanRenderModel(MissionData model)
         {
             return true;
         }
 
-        public override void Initialize(IMission model)
+        public override void Initialize(MissionData model)
         {
             UpdateView(model);
         }
 
-        public override async void UpdateView(IMission model)
+        public override async void UpdateView(MissionData model)
         {
             var ct = destroyCancellationToken;
             await WaitPreviousUpdate(ct);
@@ -64,7 +64,7 @@ namespace Missions.UI
                 _rewardView.Initialize(model.GetReward());
 
                 UnregisterProgressListener();
-                if (model is IMissionProgress missionProgress)
+                if (model.Mission is IMissionProgress missionProgress)
                 {
                     _progress.SetActive(true);
                     _missionProgress = missionProgress;

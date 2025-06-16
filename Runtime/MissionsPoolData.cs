@@ -8,8 +8,8 @@ namespace Missions
     [CreateAssetMenu(fileName = "MissionsPoolData", menuName = "Facticus/Missions/MissionsPoolData", order = 0)]
     public class MissionsPoolData : ScriptableObject
     {
-        [SerializeField] private List<MissionScriptableObject> _missions;
-        public List<MissionScriptableObject> Missions => _missions;
+        [SerializeField] private List<MissionData> _missions;
+        public List<MissionData> Missions => _missions;
         
         [SerializeField] private SerializableTimeSpan _refreshTimeSpan;
         public SerializableTimeSpan RefreshTimeSpan => _refreshTimeSpan;

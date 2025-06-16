@@ -8,6 +8,7 @@
   "dependencies": {
     "com.mackysoft.serializereference-extensions": "1.1.9",
     "com.unity.localization": "1.4.5",
+    "com.unity.serialization": "3.1.2",
     "net.tnrd.serializableinterface": "2.1.0"
   },
   "keywords": [],

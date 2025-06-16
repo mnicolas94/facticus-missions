@@ -19,15 +19,18 @@ namespace Missions.UI
 
         private void InitializeFirstMissions()
         {
-            _viewList.PopulateModels(_missionsList.Missions);
+            foreach (var serializableMission in _missionsList.Missions)
+            {
+                AddMissionView(serializableMission.Mission);
+            }
         }
 
-        private void AddMissionView(IMission mission)
+        private void AddMissionView(MissionData mission)
         {
             _viewList.Add(mission);
         }
 
-        private void RemoveMissionView(IMission mission)
+        private void RemoveMissionView(MissionData mission)
         {
             _viewList.Remove(mission);
         }

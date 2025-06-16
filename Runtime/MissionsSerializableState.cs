@@ -13,15 +13,15 @@ namespace Missions
         [SerializeField] private string _lastRefreshTime;
         public string LastRefreshTime => _lastRefreshTime;
 
-        [SerializeReference] private List<IMission> _missions = new();
-        public ReadOnlyCollection<IMission> Missions => _missions.AsReadOnly();
+        [SerializeField] private List<SerializableMission> _missions = new();
+        public List<SerializableMission> Missions => _missions;
 
-        [DontCreateProperty] public Action<IMission> Added;
+        [DontCreateProperty] public Action<MissionData> Added;
         /// <summary>
         /// Invoked when a mission is removed from the list. Won't be invoked when the list is cleared, use the
         /// Cleared event instead.
         /// </summary>
-        [DontCreateProperty] public Action<IMission> Removed;
+        [DontCreateProperty] public Action<MissionData> Removed;
         [DontCreateProperty] public Action Cleared;
 
         public void UpdateRefreshTime()
@@ -29,9 +29,9 @@ namespace Missions
             _lastRefreshTime = DateTime.UtcNow.ToString("o");
         }
         
-        public void Add(IMission item)
+        public void Add(MissionData item)
         {
-            _missions.Add(item);
+            _missions.Add(new SerializableMission(item));
             Added?.Invoke(item);
         }
 
@@ -41,14 +41,29 @@ namespace Missions
             Cleared?.Invoke();
         }
 
-        public bool Remove(IMission item)
+        public bool Remove(MissionData item)
         {
-            var result = _missions.Remove(item);
-            if (result)
+            if (TryGetSerializableMissionFromMission(item, out var serializableMission))
             {
+                _missions.Remove(serializableMission);
                 Removed?.Invoke(item);
+                return true;
             }
-            return result;
+            return false;
+        }
+        
+        private bool TryGetSerializableMissionFromMission(MissionData mission, out SerializableMission serializableMission)
+        {
+            foreach (var serializable in _missions)
+            {
+                if (serializable.Mission == mission)
+                {
+                    serializableMission = serializable;
+                    return true;
+                }
+            }
+            serializableMission = default;
+            return false;
         }
     }
 }

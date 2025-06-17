@@ -16,6 +16,7 @@ namespace Missions.UI
         [SerializeField] private GameObject _progress;
         [SerializeField] private TextMeshProUGUI _progressText;
         [SerializeField] private RectTransform _progressBar;
+        [SerializeField] private string _progressFormat = "{0} / {1}";
 
         [SerializeField] private SerializableCallback<CancellationToken, Task> _showAnimation;
         [SerializeField] private SerializableCallback<CancellationToken, Task> _hideAnimation;
@@ -107,7 +108,7 @@ namespace Missions.UI
             var max = mission.FormatProgressValues(mission.GetMaxProgress());
             var normalized = mission.GetNormalizedProgress();
             
-            _progressText.text = $"{current}/{max}";
+            _progressText.text = string.Format(_progressFormat, current, max);
             var anchorMax = _progressBar.anchorMax;
             anchorMax.x = normalized;
             _progressBar.anchorMax = anchorMax;

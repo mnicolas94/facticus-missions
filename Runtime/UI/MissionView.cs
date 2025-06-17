@@ -26,9 +26,23 @@ namespace Missions.UI
         
         public bool HasModel => _model != null;
 
+        private void OnEnable()
+        {
+            RegisterProgressListener();
+        }
+
         private void OnDisable()
         {
             UnregisterProgressListener();
+        }
+        
+        private void RegisterProgressListener()
+        {
+            if (_missionProgress != null)
+            {
+                _missionProgress.OnProgressChanged += UpdateProgress;
+                UpdateProgress();
+            }
         }
 
         private void UnregisterProgressListener()
@@ -69,8 +83,7 @@ namespace Missions.UI
                 {
                     _progress.SetActive(true);
                     _missionProgress = missionProgress;
-                    missionProgress.OnProgressChanged += UpdateProgress;
-                    UpdateProgress(missionProgress);
+                    RegisterProgressListener();
                 }
                 else
                 {

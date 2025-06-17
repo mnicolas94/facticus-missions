@@ -1,4 +1,5 @@
-﻿using SerializableCallback;
+﻿using System;
+using SerializableCallback;
 using UnityEngine;
 using UnityEngine.Events;
 using Utils.Extensions;
@@ -22,6 +23,8 @@ namespace Missions
             Awake, Start, MethodCall
         }
         [SerializeField] private StartMissionsMode _startMissionsMode = StartMissionsMode.MethodCall;
+
+        public Action<MissionData> OnBeforeMissionInitialized { get; set; }
 
         [SerializeField] private UnityEvent _onMissionCompleted;
         public UnityEvent OnMissionCompleted => _onMissionCompleted;
@@ -98,15 +101,16 @@ namespace Missions
             {
                 var missionAsset = _missionsPool.Missions.GetRandom();
                 mission = missionAsset.Clone();
-                _currentMissions.Add(missionAsset, mission);
 #if UNITY_EDITOR
                 if (Application.isPlaying)
                 {
 #endif
-                mission.Initialize();
+                    OnBeforeMissionInitialized?.Invoke(mission);
+                    mission.Initialize();
 #if UNITY_EDITOR
                 }
 #endif
+                _currentMissions.Add(missionAsset, mission);
                 return true;
             }
 

@@ -14,7 +14,7 @@ namespace Missions
         public string LastRefreshTime => _lastRefreshTime;
 
         [SerializeField] private List<SerializableMission> _missions = new();
-        public List<SerializableMission> Missions => _missions;
+        public ReadOnlyCollection<SerializableMission> Missions => _missions.AsReadOnly();
 
         [DontCreateProperty] public Action<MissionData> Added;
         /// <summary>
@@ -29,10 +29,10 @@ namespace Missions
             _lastRefreshTime = DateTime.UtcNow.ToString("o");
         }
         
-        public void Add(MissionData item)
+        public void Add(MissionData missionAsset, MissionData mission)
         {
-            _missions.Add(new SerializableMission(item));
-            Added?.Invoke(item);
+            _missions.Add(new SerializableMission(missionAsset, mission));
+            Added?.Invoke(mission);
         }
 
         public void Clear()

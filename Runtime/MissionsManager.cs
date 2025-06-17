@@ -47,10 +47,17 @@ namespace Missions
         
         public void ClearMissions()
         {
-            foreach (var currentMission in _currentMissions.Missions)
+#if UNITY_EDITOR
+            if (Application.isPlaying)
             {
-                currentMission.Mission.EndMission();
+#endif
+                foreach (var currentMission in _currentMissions.Missions)
+                {
+                    currentMission.Mission.EndMission();
+                }
+#if UNITY_EDITOR
             }
+#endif
 
             _currentMissions.Clear();
         }
@@ -66,9 +73,9 @@ namespace Missions
 
         public void StartMissions()
         {
-            foreach (var mission in _currentMissions.Missions)
+            foreach (var serializableMission in _currentMissions.Missions)
             {
-                StartMission(mission);
+                StartMission(serializableMission.Mission);
             }
         }
 
@@ -89,9 +96,17 @@ namespace Missions
         {
             if (_canCreateMission.Value)
             {
-                mission = _missionsPool.Missions.GetRandom().Clone();
-                _currentMissions.Add(mission);
+                var missionAsset = _missionsPool.Missions.GetRandom();
+                mission = missionAsset.Clone();
+                _currentMissions.Add(missionAsset, mission);
+#if UNITY_EDITOR
+                if (Application.isPlaying)
+                {
+#endif
                 mission.Initialize();
+#if UNITY_EDITOR
+                }
+#endif
                 return true;
             }
 

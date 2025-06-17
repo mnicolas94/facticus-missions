@@ -16,7 +16,8 @@ namespace Missions
             Simplified = true,
             DisableValidation = true,
         };
-        
+
+        [SerializeField] private MissionData _originalMissionAsset;
         [SerializeField] private string _serializedData;
         
         private MissionData _mission;
@@ -27,7 +28,8 @@ namespace Missions
             {
                 if (!_mission && !string.IsNullOrEmpty(_serializedData))
                 {
-                    _mission = JsonSerialization.FromJson<MissionData>(_serializedData, SerializationParameters);
+                    _mission = _originalMissionAsset.Clone();  // to get non-persistent fields from original asset
+                    JsonSerialization.FromJsonOverride(_serializedData, ref _mission, SerializationParameters);
                 }
 
                 return _mission;
@@ -38,14 +40,10 @@ namespace Missions
         {
         }
         
-        public SerializableMission(MissionData mission)
+        public SerializableMission(MissionData originalAsset, MissionData mission)
         {
+            _originalMissionAsset = originalAsset;
             _mission = mission;
-        }
-
-        public static implicit operator MissionData(SerializableMission serializableMission)
-        {
-            return serializableMission.Mission;
         }
         
         public void OnBeforeSerialize()

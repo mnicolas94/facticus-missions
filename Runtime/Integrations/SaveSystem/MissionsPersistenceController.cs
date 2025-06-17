@@ -35,16 +35,41 @@ namespace Missions.Integrations.SaveSystem
         public MissionSaver(MissionsSerializableState missionsList)
         {
             _missionsList = missionsList;
-            _missionsList.Added += SaveList;
+            _missionsList.Added += OnMissionAdded;
             _missionsList.Removed += SaveList;
             _missionsList.Cleared += SaveList;
+
+            foreach (var mission in missionsList.Missions)
+            {
+                RegisterOnProgressChanged(mission.Mission);
+            }
         }
 
         public void UnregisterListeners()
         {
-            _missionsList.Added -= SaveList;
+            _missionsList.Added -= OnMissionAdded;
             _missionsList.Removed -= SaveList;
             _missionsList.Cleared -= SaveList;
+        }
+
+        private void OnMissionAdded(MissionData mission)
+        {
+            RegisterOnProgressChanged(mission);
+            SaveList();
+        }
+
+        private void RegisterOnProgressChanged(MissionData mission)
+        {
+            if (mission.Mission is IMissionProgress progress)
+            {
+                progress.OnProgressChanged += SaveListOnProgressChanged;
+            }
+        }
+
+        private void SaveListOnProgressChanged()
+        {
+            // TODO add a cooldown to avoid to many saves for missions that progress to often
+            SaveList();
         }
 
         private void SaveList(MissionData _)

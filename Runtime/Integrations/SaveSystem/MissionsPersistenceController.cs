@@ -2,49 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SaveSystem;
+using Utils.Attributes;
 
 namespace Missions.Integrations.SaveSystem
 {
     public class MissionsPersistenceController : MonoBehaviour
     {
-        [SerializeField] private List<MissionsSerializableState> _missionsLists;
-
-        private readonly List<MissionSaver> _savers = new();
+        [SerializeField, AutoProperty] private MissionsManager _missionsManager;
+        private MissionsSerializableState _missionsList;
         
         private void Start()
         {
-            foreach (var missionsList in _missionsLists)
-            {
-                _savers.Add(new MissionSaver(missionsList));
-            }
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var saver in _savers)
-            {
-                saver.UnregisterListeners();
-            }
-        }
-    }
-
-    public struct MissionSaver
-    {
-        private readonly MissionsSerializableState _missionsList;
-
-        public MissionSaver(MissionsSerializableState missionsList)
-        {
-            _missionsList = missionsList;
+            _missionsList = _missionsManager.CurrentMissions;
             _missionsList.Added += OnMissionAdded;
             _missionsList.Removed += SaveList;
             _missionsList.Cleared += SaveList;
 
-            foreach (var mission in missionsList.Missions)
+            foreach (var mission in _missionsList.Missions)
             {
                 RegisterOnProgressChanged(mission.Mission);
             }
         }
 
+        private void OnDestroy()
+        {
+            UnregisterListeners();
+        }
+        
         public void UnregisterListeners()
         {
             _missionsList.Added -= OnMissionAdded;

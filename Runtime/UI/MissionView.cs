@@ -103,8 +103,8 @@ namespace Missions.UI
         
         private void UpdateProgress(IMissionProgress mission)
         {
-            var current = mission.GetCurrentProgress();
-            var max = mission.GetMaxProgress();
+            var current = mission.FormatProgressValues(mission.GetCurrentProgress());
+            var max = mission.FormatProgressValues(mission.GetMaxProgress());
             var normalized = mission.GetNormalizedProgress();
             
             _progressText.text = $"{current}/{max}";

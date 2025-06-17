@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace Missions
@@ -8,6 +9,11 @@ namespace Missions
         float GetCurrentProgress();
         float GetMaxProgress();
         Action OnProgressChanged { get; set; }
+
+        string FormatProgressValues(float value)
+        {
+            return value.ToString(CultureInfo.InvariantCulture);
+        }
     }
 
     public static class IMissionProgressExtensions

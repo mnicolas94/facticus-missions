@@ -36,6 +36,7 @@ namespace Missions
         public void Initialize()
         {
             _mission.Initialize();
+            _reward.Initialize();
         }
 
         public void StartMission()

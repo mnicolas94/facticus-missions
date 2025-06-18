@@ -127,7 +127,7 @@ namespace Missions
         private void CompleteMission(MissionData mission)
         {
             mission.EndMission();
-            mission.GetReward().ApplyReward();
+            mission.Reward.ApplyReward();
             _onMissionCompleted.Invoke();
             _onMissionCompletedWithArg.Invoke(mission);
             

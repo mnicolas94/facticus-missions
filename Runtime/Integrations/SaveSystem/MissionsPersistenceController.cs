@@ -1,5 +1,4 @@
 ﻿#if ENABLED_SAVESYSTEM
-using System.Collections.Generic;
 using UnityEngine;
 using SaveSystem;
 using Utils.Attributes;

@@ -12,27 +12,29 @@ namespace Missions
     public partial class MissionData : ScriptableObject, IMissionImplementation
     {
         private const string DescriptionSelfKey = "self";
+        
         [SerializeField, DontCreateProperty] private LocalizedString _description;
-        
+        public LocalizedString Description => _description;
+
         [SerializeReference, SubclassSelector] protected IMissionReward _reward;
-        
-        [SerializeReference, SubclassSelector] private IMissionImplementation _mission;
-        public IMissionImplementation Mission => _mission;
-        
-        public LocalizedString GetDescription()
+        public IMissionReward Reward
         {
-            return _description;
+            get => _reward;
+            set => _reward = value;
         }
-        
-        public IMissionReward GetReward()
+
+        [SerializeReference, SubclassSelector] private IMissionImplementation _mission;
+        public IMissionImplementation Mission
         {
-            return _reward;
+            get => _mission;
+            set => _mission = value;
         }
 
         public MissionData Clone()
         {
             return Instantiate(this);
         }
+        
         public void Initialize()
         {
             _mission.Initialize();

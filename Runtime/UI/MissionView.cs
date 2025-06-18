@@ -75,8 +75,8 @@ namespace Missions.UI
             }
             else
             {
-                _descriptionText.StringReference = model.GetDescription();
-                _rewardView.Initialize(model.GetReward());
+                _descriptionText.StringReference = model.Description;
+                _rewardView.Initialize(model.Reward);
 
                 UnregisterProgressListener();
                 if (model.Mission is IMissionProgress missionProgress)

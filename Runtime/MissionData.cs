@@ -34,6 +34,14 @@ namespace Missions
         {
             return Instantiate(this);
         }
+
+        public bool IsCompleted => _mission.IsCompleted;
+
+        public Action OnCompleted
+        {
+            get => _mission.OnCompleted;
+            set => _mission.OnCompleted = value;
+        }
         
         public void Initialize()
         {
@@ -49,12 +57,6 @@ namespace Missions
         public void EndMission()
         {
             _mission.EndMission();
-        }
-
-        public Action OnCompleted
-        {
-            get => _mission.OnCompleted;
-            set => _mission.OnCompleted = value;
         }
 
 #if UNITY_EDITOR

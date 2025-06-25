@@ -8,6 +8,10 @@ namespace Missions
     /// </summary>
     public interface IMissionImplementation
     {
+        bool IsCompleted { get; }
+        
+        Action OnCompleted { get; set; }
+        
         /// <summary>
         /// Set any mission data, e.g. progress, to its initial state.
         /// </summary>
@@ -22,7 +26,5 @@ namespace Missions
         /// Stop tracking mission completion condition.
         /// </summary>
         void EndMission();
-
-        Action OnCompleted { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using ModelView;
 using SerializableCallback;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Localization.Components;
 
 namespace Missions.UI
@@ -21,23 +22,32 @@ namespace Missions.UI
         [SerializeField] private SerializableCallback<CancellationToken, Task> _showAnimation;
         [SerializeField] private SerializableCallback<CancellationToken, Task> _hideAnimation;
 
+        [SerializeField] private UnityEvent _onNotCompleteState;
+        [SerializeField] private UnityEvent _onCompleteState;
+
         private bool _updatingView;
         private IMissionProgress _missionProgress;
         
-        public bool HasModel => _model != null;
+        public bool HasModel => _model;
 
         private void OnEnable()
         {
-            RegisterProgressListener();
+            RegisterListeners();
         }
 
         private void OnDisable()
         {
-            UnregisterProgressListener();
+            UnregisterListener();
         }
         
-        private void RegisterProgressListener()
+        private void RegisterListeners()
         {
+            if (_model)
+            {
+                _model.OnCompleted += UpdateCompletedState;
+                UpdateCompletedState();
+            }
+            
             if (_missionProgress != null)
             {
                 _missionProgress.OnProgressChanged += UpdateProgress;
@@ -45,8 +55,13 @@ namespace Missions.UI
             }
         }
 
-        private void UnregisterProgressListener()
+        private void UnregisterListener()
         {
+            if (_model)
+            {
+                _model.OnCompleted -= UpdateCompletedState;
+            }
+            
             if (_missionProgress != null)
             {
                 _missionProgress.OnProgressChanged -= UpdateProgress;
@@ -69,7 +84,7 @@ namespace Missions.UI
             await WaitPreviousUpdate(ct);
             _updatingView = true;
             
-            if (model == null)
+            if (!model)
             {
                 await PlayAnimation(_hideAnimation, ct);
             }
@@ -78,12 +93,16 @@ namespace Missions.UI
                 _descriptionText.StringReference = model.Description;
                 _rewardView.Initialize(model.Reward);
 
-                UnregisterProgressListener();
+                // handle completed state
+                UpdateCompletedState();
+                
+                // handle progress
+                UnregisterListener();
                 if (model.Mission is IMissionProgress missionProgress)
                 {
                     _progress.SetActive(true);
                     _missionProgress = missionProgress;
-                    RegisterProgressListener();
+                    RegisterListeners();
                 }
                 else
                 {
@@ -108,6 +127,12 @@ namespace Missions.UI
             {
                 await Task.Yield();
             }
+        }
+
+        private void UpdateCompletedState()
+        {
+            var evt = _model.IsCompleted ? _onCompleteState : _onNotCompleteState;
+            evt.Invoke();
         }
 
         private void UpdateProgress()

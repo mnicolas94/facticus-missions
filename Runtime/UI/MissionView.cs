@@ -32,20 +32,20 @@ namespace Missions.UI
 
         private void OnEnable()
         {
-            RegisterListeners();
+            RegisterListeners(_model);
         }
 
         private void OnDisable()
         {
-            UnregisterListener();
+            UnregisterListener(_model);
         }
         
-        private void RegisterListeners()
+        private void RegisterListeners(MissionData model)
         {
-            if (_model)
+            if (model)
             {
-                _model.OnCompleted += UpdateCompletedState;
-                UpdateCompletedState();
+                model.OnCompleted += UpdateCompletedState;
+                UpdateCompletedState(model);
             }
             
             if (_missionProgress != null)
@@ -55,11 +55,11 @@ namespace Missions.UI
             }
         }
 
-        private void UnregisterListener()
+        private void UnregisterListener(MissionData model)
         {
-            if (_model)
+            if (model)
             {
-                _model.OnCompleted -= UpdateCompletedState;
+                model.OnCompleted -= UpdateCompletedState;
             }
             
             if (_missionProgress != null)
@@ -84,6 +84,8 @@ namespace Missions.UI
             await WaitPreviousUpdate(ct);
             _updatingView = true;
             
+            UnregisterListener(_model);  // unregister listeners for previous model
+            
             if (!model)
             {
                 await PlayAnimation(_hideAnimation, ct);
@@ -94,20 +96,20 @@ namespace Missions.UI
                 _rewardView.Initialize(model.Reward);
 
                 // handle completed state
-                UpdateCompletedState();
+                UpdateCompletedState(model);
                 
                 // handle progress
-                UnregisterListener();
                 if (model.Mission is IMissionProgress missionProgress)
                 {
                     _progress.SetActive(true);
                     _missionProgress = missionProgress;
-                    RegisterListeners();
                 }
                 else
                 {
                     _progress.SetActive(false);
                 }
+                
+                RegisterListeners(model);
                 
                 await PlayAnimation(_showAnimation, ct);
             }
@@ -131,7 +133,12 @@ namespace Missions.UI
 
         private void UpdateCompletedState()
         {
-            var evt = _model.IsCompleted ? _onCompleteState : _onNotCompleteState;
+            UpdateCompletedState(_model);
+        }
+        
+        private void UpdateCompletedState(MissionData model)
+        {
+            var evt = model.IsCompleted ? _onCompleteState : _onNotCompleteState;
             evt.Invoke();
         }
 

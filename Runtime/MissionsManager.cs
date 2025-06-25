@@ -17,6 +17,7 @@ namespace Missions
         [SerializeField] private SerializableValueCallback<int> _maxMissions;
         [SerializeField] private SerializableValueCallback<bool> _canCreateMission;
         [SerializeField] private bool _createNewOnCompleted;
+        [SerializeField] private bool _removeFromListOnCompleted = true;
 
         enum StartMissionsMode
         {
@@ -130,8 +131,12 @@ namespace Missions
             mission.Reward.ApplyReward();
             _onMissionCompleted.Invoke();
             _onMissionCompletedWithArg.Invoke(mission);
+
+            if (_removeFromListOnCompleted)
+            {
+                _currentMissions.Remove(mission);
+            }
             
-            _currentMissions.Remove(mission);
             if (_createNewOnCompleted && TryCreateNewMission(out var newMission))
             {
                 StartMission(newMission);

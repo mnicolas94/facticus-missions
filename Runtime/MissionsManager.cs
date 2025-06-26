@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SerializableCallback;
 using UnityEngine;
 using UnityEngine.Events;
@@ -72,6 +73,14 @@ namespace Missions
         {
             var missing = _maxMissions.Value - _currentMissions.Missions.Count;
             CreateNewRandomMissions(missing);
+        }
+
+        public void CreateMissionsFromAssets(List<MissionData> missionAssets)
+        {
+            foreach (var missionAsset in missionAssets)
+            {
+                CreateNewMissionFromAsset(missionAsset);
+            }
         }
 
         public void StartMissions()

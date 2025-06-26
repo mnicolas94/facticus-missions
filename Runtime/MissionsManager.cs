@@ -15,7 +15,6 @@ namespace Missions
         public MissionsPoolData MissionsPool => _missionsPool;
 
         [SerializeField] private SerializableValueCallback<int> _maxMissions;
-        [SerializeField] private SerializableValueCallback<bool> _canCreateMission;
         [SerializeField] private bool _createNewOnCompleted;
         [SerializeField] private bool _removeFromListOnCompleted = true;
 
@@ -72,7 +71,7 @@ namespace Missions
         public void EnsureMaxMission()
         {
             var missing = _maxMissions.Value - _currentMissions.Missions.Count;
-            CreateNewMissions(missing);
+            CreateNewRandomMissions(missing);
         }
 
         public void StartMissions()
@@ -83,40 +82,34 @@ namespace Missions
             }
         }
 
-        private void CreateNewMissions(int count)
+        private void CreateNewRandomMissions(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                TryCreateNewMission();
+                CreateNewRandomMission();
             }
         }
 
-        private bool TryCreateNewMission()
+        private MissionData CreateNewRandomMission()
         {
-            return TryCreateNewMission(out var _);
+            var missionAsset = _missionsPool.Missions.GetRandom();
+            return CreateNewMissionFromAsset(missionAsset);
         }
 
-        private bool TryCreateNewMission(out MissionData mission)
+        private MissionData CreateNewMissionFromAsset(MissionData missionOriginalAsset)
         {
-            if (_canCreateMission.Value)
+            var mission = missionOriginalAsset.Clone();
+#if UNITY_EDITOR
+            if (Application.isPlaying)
             {
-                var missionAsset = _missionsPool.Missions.GetRandom();
-                mission = missionAsset.Clone();
-#if UNITY_EDITOR
-                if (Application.isPlaying)
-                {
 #endif
-                    OnBeforeMissionInitialized?.Invoke(mission);
-                    mission.Initialize();
+                OnBeforeMissionInitialized?.Invoke(mission);
+                mission.Initialize();
 #if UNITY_EDITOR
-                }
-#endif
-                _currentMissions.Add(missionAsset, mission);
-                return true;
             }
-
-            mission = default;
-            return false;
+#endif
+            _currentMissions.Add(missionOriginalAsset, mission);
+            return mission;
         }
 
         private void StartMission(MissionData mission)
@@ -137,8 +130,9 @@ namespace Missions
                 _currentMissions.Remove(mission);
             }
             
-            if (_createNewOnCompleted && TryCreateNewMission(out var newMission))
+            if (_createNewOnCompleted)
             {
+                var newMission = CreateNewRandomMission();
                 StartMission(newMission);
             }
         }

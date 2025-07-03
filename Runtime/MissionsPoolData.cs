@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using Utils.Serializables;
 
@@ -17,7 +18,8 @@ namespace Missions
         public static int SecondsToNextRefresh(MissionsPoolData missionsData, MissionsSerializableState persistedData)
         {
             var serializedTime = persistedData.LastRefreshTime;
-            var lastRefresh = DateTime.TryParse(serializedTime, out var parsed) ? parsed : DateTime.MinValue;
+            var isValidDate = DateTime.TryParse(serializedTime, null, DateTimeStyles.RoundtripKind, out var parsed);
+            var lastRefresh = isValidDate ? parsed : DateTime.MinValue;
             return missionsData.RefreshTimeSpan.ToSeconds() - (int)(DateTime.UtcNow - lastRefresh).TotalSeconds;
         }
     }

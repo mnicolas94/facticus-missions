@@ -20,7 +20,7 @@ namespace Missions.Integrations.SaveSystem
         {
             _missionsList = _missionsManager.CurrentMissions;
             _missionsList.Added += OnMissionAdded;
-            _missionsList.Removed += SaveList;
+            _missionsList.Removed += OnMissionRemoved;
             _missionsList.Cleared += SaveList;
 
             foreach (var mission in _missionsList.Missions)

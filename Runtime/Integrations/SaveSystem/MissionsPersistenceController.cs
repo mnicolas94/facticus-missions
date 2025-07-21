@@ -36,6 +36,7 @@ namespace Missions.Integrations.SaveSystem
         
         public void UnregisterListeners()
         {
+            if (!_missionsList) return;
             _missionsList.Added -= OnMissionAdded;
             _missionsList.Removed -= OnMissionRemoved;
             _missionsList.Cleared -= SaveList;

@@ -19,9 +19,7 @@ namespace Missions
                 if (!_mission)
                 {
                     _mission = _originalMissionAsset.Clone();  // to get non-persistent fields from original asset
-                    _mission.SerializableData.Reward = _serialized.Reward;
-                    _mission.SerializableData.IsClaimed = _serialized.IsClaimed;
-                    _mission.SerializableData.Mission = _serialized.Mission;
+                    _mission.SerializableData = _serialized;
                 }
     
                 return _mission;

@@ -20,11 +20,12 @@ namespace Missions
         [SerializeField, DontCreateProperty] private bool _requiresClaim;
         public bool RequiresClaim => _requiresClaim;
         
-        [DontCreateProperty]
-        public Action RewardClaimed;
-        
         [SerializeField] private MissionDataSerializable _serializableData;
-        public MissionDataSerializable SerializableData => _serializableData;
+        public MissionDataSerializable SerializableData
+        {
+            get => _serializableData;
+            internal set => _serializableData = value;
+        }
 
         public IMissionReward Reward => _serializableData.Reward;
 
@@ -34,7 +35,9 @@ namespace Missions
 
         public MissionData Clone()
         {
-            return Instantiate(this);
+            var clone = Instantiate(this);
+            clone._serializableData.IsClaimed = false;  // make sure the reward is not claimed on new instances
+            return clone;
         }
 
         public bool IsCompleted => Mission.IsCompleted;
@@ -66,7 +69,7 @@ namespace Missions
             if (IsRewardClaimed) return;
             Reward.ApplyReward();
             _serializableData.IsClaimed = true;
-            RewardClaimed?.Invoke();
+            Reward.RewardClaimed?.Invoke();
         }
 
 #if UNITY_EDITOR
@@ -88,9 +91,9 @@ namespace Missions
     /// </summary>
     [Serializable]
     [GeneratePropertyBag]
-    public class MissionDataSerializable
+    public partial class MissionDataSerializable
     {
-        [SerializeField, ReadOnly] public bool IsClaimed;
+        [SerializeField] public bool IsClaimed;
         
         [SerializeReference, SubclassSelector] public IMissionReward Reward;
 

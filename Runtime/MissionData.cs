@@ -93,6 +93,8 @@ namespace Missions
     [GeneratePropertyBag]
     public partial class MissionDataSerializable
     {
+        public static string IsClaimedPropertyName => nameof(IsClaimed);
+        
         [SerializeField] public bool IsClaimed;
         
         [SerializeReference, SubclassSelector] public IMissionReward Reward;

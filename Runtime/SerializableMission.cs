@@ -9,11 +9,9 @@ namespace Missions
     public partial class SerializableMission
     {
         [SerializeField] private MissionData _originalMissionAsset;
-        [SerializeReference] private IMissionReward _reward;
-        [SerializeReference] private IMissionImplementation _implementation;
+        [SerializeField] private MissionDataSerializable _serialized;
         
         private MissionData _mission;
-    
         public MissionData Mission
         {
             get
@@ -21,8 +19,9 @@ namespace Missions
                 if (!_mission)
                 {
                     _mission = _originalMissionAsset.Clone();  // to get non-persistent fields from original asset
-                    _mission.Reward = _reward;
-                    _mission.Mission = _implementation;
+                    _mission.SerializableData.Reward = _serialized.Reward;
+                    _mission.SerializableData.IsClaimed = _serialized.IsClaimed;
+                    _mission.SerializableData.Mission = _serialized.Mission;
                 }
     
                 return _mission;
@@ -37,8 +36,7 @@ namespace Missions
         {
             _originalMissionAsset = originalAsset;
             _mission = mission;
-            _reward = mission.Reward;
-            _implementation = mission.Mission;
+            _serialized = mission.SerializableData;
         }
     }
 }

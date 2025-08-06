@@ -132,7 +132,10 @@ namespace Missions
         private void CompleteMission(MissionData mission)
         {
             mission.EndMission();
-            mission.Reward.ApplyReward();
+            if (!mission.RequiresClaim)
+            {
+                mission.ApplyReward();
+            }
             _onMissionCompleted.Invoke();
             _onMissionCompletedWithArg.Invoke(mission);
 

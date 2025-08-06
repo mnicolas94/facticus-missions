@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
+using Utils.Attributes;
 
 namespace Missions
 {
@@ -16,47 +17,56 @@ namespace Missions
         [SerializeField, DontCreateProperty] private LocalizedString _description;
         public LocalizedString Description => _description;
 
-        [SerializeReference, SubclassSelector] protected IMissionReward _reward;
-        public IMissionReward Reward
-        {
-            get => _reward;
-            set => _reward = value;
-        }
+        [SerializeField, DontCreateProperty] private bool _requiresClaim;
+        public bool RequiresClaim => _requiresClaim;
+        
+        [DontCreateProperty]
+        public Action RewardClaimed;
+        
+        [SerializeField] private MissionDataSerializable _serializableData;
+        public MissionDataSerializable SerializableData => _serializableData;
 
-        [SerializeReference, SubclassSelector] private IMissionImplementation _mission;
-        public IMissionImplementation Mission
-        {
-            get => _mission;
-            set => _mission = value;
-        }
+        public IMissionReward Reward => _serializableData.Reward;
+
+        public IMissionImplementation Mission => _serializableData.Mission;
+
+        public bool IsRewardClaimed => _serializableData.IsClaimed;
 
         public MissionData Clone()
         {
             return Instantiate(this);
         }
 
-        public bool IsCompleted => _mission.IsCompleted;
+        public bool IsCompleted => Mission.IsCompleted;
 
         public Action OnCompleted
         {
-            get => _mission.OnCompleted;
-            set => _mission.OnCompleted = value;
+            get => Mission.OnCompleted;
+            set => Mission.OnCompleted = value;
         }
         
         public void Initialize()
         {
-            _mission.Initialize();
-            _reward.Initialize();
+            Mission.Initialize();
+            Reward.Initialize();
         }
 
         public void StartMission()
         {
-            _mission.StartMission();
+            Mission.StartMission();
         }
 
         public void EndMission()
         {
-            _mission.EndMission();
+            Mission.EndMission();
+        }
+
+        public void ApplyReward()
+        {
+            if (IsRewardClaimed) return;
+            Reward.ApplyReward();
+            _serializableData.IsClaimed = true;
+            RewardClaimed?.Invoke();
         }
 
 #if UNITY_EDITOR
@@ -71,5 +81,19 @@ namespace Missions
         }
         
 #endif
+    }
+
+    /// <summary>
+    /// Serializable version of the mission data. This is the data that is persisted (saved).
+    /// </summary>
+    [Serializable]
+    [GeneratePropertyBag]
+    public class MissionDataSerializable
+    {
+        [SerializeField, ReadOnly] public bool IsClaimed;
+        
+        [SerializeReference, SubclassSelector] public IMissionReward Reward;
+
+        [SerializeReference, SubclassSelector] public IMissionImplementation Mission;
     }
 }

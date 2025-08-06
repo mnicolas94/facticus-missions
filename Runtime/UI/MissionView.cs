@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Localization.Components;
+using UnityEngine.UI;
 
 namespace Missions.UI
 {
@@ -14,6 +15,7 @@ namespace Missions.UI
     {
         [SerializeField] private LocalizeStringEvent _descriptionText;
         [SerializeField] private GenericView _rewardView;
+        [SerializeField] private Button _claimRewardButton;
         [SerializeField] private GameObject _progress;
         [SerializeField] private TextMeshProUGUI _progressText;
         [SerializeField] private RectTransform _progressBar;
@@ -24,11 +26,18 @@ namespace Missions.UI
 
         [SerializeField] private UnityEvent _onNotCompleteState;
         [SerializeField] private UnityEvent _onCompleteState;
+        [SerializeField] private UnityEvent _onRewardNotApplied;
+        [SerializeField] private UnityEvent _onRewardApplied;
 
         private bool _updatingView;
         private IMissionProgress _missionProgress;
         
         public bool HasModel => _model;
+
+        private void Start()
+        {
+            _claimRewardButton.onClick.AddListener(ClaimReward);
+        }
 
         private void OnEnable()
         {
@@ -45,7 +54,9 @@ namespace Missions.UI
             if (model)
             {
                 model.OnCompleted += UpdateCompletedState;
+                model.Reward.RewardClaimed += UpdateClaimedState;
                 UpdateCompletedState(model);
+                UpdateClaimedState(model);
             }
             
             if (_missionProgress != null)
@@ -60,6 +71,7 @@ namespace Missions.UI
             if (model)
             {
                 model.OnCompleted -= UpdateCompletedState;
+                model.Reward.RewardClaimed -= UpdateClaimedState;
             }
             
             if (_missionProgress != null)
@@ -97,6 +109,7 @@ namespace Missions.UI
 
                 // handle completed state
                 UpdateCompletedState(model);
+                UpdateClaimedState(model);
                 
                 // handle progress
                 if (model.Mission is IMissionProgress missionProgress)
@@ -138,7 +151,20 @@ namespace Missions.UI
         
         private void UpdateCompletedState(MissionData model)
         {
+            _claimRewardButton.interactable = model.RequiresClaim && model.IsCompleted;
             var evt = model.IsCompleted ? _onCompleteState : _onNotCompleteState;
+            evt.Invoke();
+        }
+
+        private void UpdateClaimedState()
+        {
+            UpdateClaimedState(_model);
+        }
+
+        private void UpdateClaimedState(MissionData model)
+        {
+            _claimRewardButton.gameObject.SetActive(!model.IsRewardClaimed && model.RequiresClaim);
+            var evt = model.IsRewardClaimed ? _onRewardApplied : _onRewardNotApplied;
             evt.Invoke();
         }
 
@@ -157,6 +183,14 @@ namespace Missions.UI
             var anchorMax = _progressBar.anchorMax;
             anchorMax.x = normalized;
             _progressBar.anchorMax = anchorMax;
+        }
+
+        private void ClaimReward()
+        {
+            if (_model && _model.RequiresClaim && _model.IsCompleted && !_model.IsRewardClaimed)
+            {
+                _model.ApplyReward();
+            }
         }
     }
 }

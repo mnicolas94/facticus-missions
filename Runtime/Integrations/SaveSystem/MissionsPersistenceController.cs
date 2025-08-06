@@ -25,7 +25,7 @@ namespace Missions.Integrations.SaveSystem
 
             foreach (var mission in _missionsList.Missions)
             {
-                RegisterOnProgressChanged(mission.Mission);
+                RegisterMissionListeners(mission.Mission);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Missions.Integrations.SaveSystem
 
         private void OnMissionAdded(MissionData mission)
         {
-            RegisterOnProgressChanged(mission);
+            RegisterMissionListeners(mission);
             SaveList();
         }
 
@@ -53,19 +53,21 @@ namespace Missions.Integrations.SaveSystem
             SaveList();
         }
 
-        private void RegisterOnProgressChanged(MissionData mission)
+        private void RegisterMissionListeners(MissionData mission)
         {
+            mission.Reward.RewardClaimed += SaveNotOften;
+            
             if (mission.Mission is IMissionProgress progress)
             {
-                progress.OnProgressChanged += SaveListOnProgressChanged;
+                progress.OnProgressChanged += SaveNotOften;
             }
         }
 
         /// <summary>
-        /// Saves a mission's progress changed. If the request to save is too often, the save will be performed after
-        /// a cooldown
+        /// Saves the missions list. If the request to save is too often, the save will be performed after
+        /// a cooldown. It ignores any save request during the cooldown.
         /// </summary>
-        private void SaveListOnProgressChanged()
+        private void SaveNotOften()
         {
             var elapsed = Time.time - _lastSaveTime;
             
@@ -73,7 +75,7 @@ namespace Missions.Integrations.SaveSystem
             {
                 if (!_isOnCooldown)
                 {
-                    SaveAfterCooldown(_saveCooldown);  // put mission on cooldown
+                    SaveAfterCooldown(_saveCooldown);  // put save on cooldown
                 }
                 return;
             }

@@ -13,8 +13,6 @@ namespace Missions.Integrations.SaveSystem
         [SerializeField] private float _saveCooldown = 1f;
         
         private MissionsSerializableState _missionsList;
-        private float _lastSaveTime;
-        private bool _isOnCooldown;
         
         private void Start()
         {
@@ -55,42 +53,12 @@ namespace Missions.Integrations.SaveSystem
 
         private void RegisterMissionListeners(MissionData mission)
         {
-            mission.Reward.RewardClaimed += SaveNotOften;
+            mission.Reward.RewardClaimed += SaveList;
             
             if (mission.Mission is IMissionProgress progress)
             {
-                progress.OnProgressChanged += SaveNotOften;
+                progress.OnProgressChanged += SaveList;
             }
-        }
-
-        /// <summary>
-        /// Saves the missions list. If the request to save is too often, the save will be performed after
-        /// a cooldown. It ignores any save request during the cooldown.
-        /// </summary>
-        private void SaveNotOften()
-        {
-            var elapsed = Time.time - _lastSaveTime;
-            
-            if (elapsed < _saveCooldown)  // trying to save too early
-            {
-                if (!_isOnCooldown)
-                {
-                    SaveAfterCooldown(_saveCooldown);  // put save on cooldown
-                }
-                return;
-            }
-
-            SaveList();
-        }
-
-        private async void SaveAfterCooldown(float cooldown)
-        {
-            _isOnCooldown = true;
-            
-            await Awaitable.WaitForSecondsAsync(cooldown);
-            SaveList();
-            
-            _isOnCooldown = false;
         }
         
         private void SaveList(MissionData _)
@@ -100,8 +68,7 @@ namespace Missions.Integrations.SaveSystem
         
         private async void SaveList()
         {
-            _lastSaveTime = Time.time;
-            await _missionsList.Save();
+            await _missionsList.SaveNotOften(_saveCooldown);
         }
     }
 }

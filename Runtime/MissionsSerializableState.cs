@@ -51,6 +51,21 @@ namespace Missions
             }
             return false;
         }
+
+        public bool TryGetMissionFromOriginal(MissionData originalAsset, out MissionData mission)
+        {
+            foreach (var serializableMission in _missions)
+            {
+                if (serializableMission.OriginalMissionAsset == originalAsset)
+                {
+                    mission = serializableMission.Mission;
+                    return true;
+                }
+            }
+
+            mission = null;
+            return false;
+        }
         
         private bool TryGetSerializableMissionFromMission(MissionData mission, out SerializableMission serializableMission)
         {

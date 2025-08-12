@@ -9,6 +9,8 @@ namespace Missions
     public partial class SerializableMission
     {
         [SerializeField] private MissionData _originalMissionAsset;
+        public MissionData OriginalMissionAsset => _originalMissionAsset;
+        
         [SerializeField] private MissionDataSerializable _serialized;
         
         private MissionData _mission;

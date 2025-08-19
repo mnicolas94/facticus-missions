@@ -105,7 +105,7 @@ namespace Missions
             return CreateNewMissionFromAsset(missionAsset);
         }
 
-        private MissionData CreateNewMissionFromAsset(MissionData missionOriginalAsset)
+        public MissionData CreateNewMissionFromAsset(MissionData missionOriginalAsset)
         {
             var mission = missionOriginalAsset.Clone();
 #if UNITY_EDITOR

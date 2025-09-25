@@ -125,6 +125,7 @@ namespace Missions
         {
             if (mission.IsCompleted) return;  // do not start if already completed
             
+            mission.EndMission();  // make sure is ended before starting
             mission.StartMission();
             mission.OnCompleted += () => CompleteMission(mission);
         }

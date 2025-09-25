@@ -51,6 +51,7 @@ namespace Missions.UI
         
         private void RegisterListeners(MissionData model)
         {
+            UnregisterListener(model);  // ensure no double registration
             if (model)
             {
                 model.OnCompleted += UpdateCompletedState;

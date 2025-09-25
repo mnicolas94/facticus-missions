@@ -17,6 +17,11 @@ namespace Missions.UI
             _missionListSource.ListChanged += UpdateMissionsList;
         }
 
+        private void OnDestroy()
+        {
+            _missionListSource.ListChanged -= UpdateMissionsList;
+        }
+
         private void UpdateMissionsList()
         {
             _viewList.Clear();

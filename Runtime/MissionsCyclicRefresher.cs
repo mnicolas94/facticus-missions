@@ -12,26 +12,33 @@ namespace Missions
     {
         [SerializeField, AutoProperty] private MissionsManager _missionsManager;
         [SerializeField] private float _firstCheckDelay;
-        [SerializeField] private float _checkRefreshCooldown;
 
-        private void Start()
+        private async void Start()
         {
-            InvokeRepeating(nameof(CheckTimeInterval), _firstCheckDelay, _checkRefreshCooldown);
+            await Awaitable.WaitForSecondsAsync(_firstCheckDelay, destroyCancellationToken);
+            CheckTimeInterval();
         }
 
-        private void CheckTimeInterval()
+        private async void CheckTimeInterval()
         {
             var secondsToNextRefresh = MissionsPoolData.SecondsToNextRefresh(_missionsManager.MissionsPool,
                 _missionsManager.CurrentMissions);
-            var needRefresh = secondsToNextRefresh <= 0;
 
-            if (needRefresh)
-            {
-                _missionsManager.CurrentMissions.UpdateRefreshTime();
-                _missionsManager.ClearMissions();
-                _missionsManager.EnsureMaxMission();
-                _missionsManager.StartMissions();
-            }
+            await Awaitable.WaitForSecondsAsync(secondsToNextRefresh, destroyCancellationToken);
+
+            if (destroyCancellationToken.IsCancellationRequested) return;
+            
+            Refresh();
+            CheckTimeInterval();
+        }
+
+        [ContextMenu(nameof(Refresh))]
+        public void Refresh()
+        {
+            _missionsManager.CurrentMissions.UpdateRefreshTime();
+            _missionsManager.ClearMissions();
+            _missionsManager.EnsureMaxMission();
+            _missionsManager.StartMissions();
         }
     }
 }

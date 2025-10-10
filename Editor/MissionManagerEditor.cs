@@ -30,15 +30,6 @@ namespace Missions.Editor
             clearMissionsButton.text = "Clear Missions";
             root.Add(clearMissionsButton);
 
-            var ensureMaxMissionsButton = new Button(EnsureMaxMissions);
-            ensureMaxMissionsButton.text = "Ensure Max Missions";
-            root.Add(ensureMaxMissionsButton);
-            
-            var refreshMissionsButton = new Button(RefreshMissions);
-            refreshMissionsButton.text = "Refresh Missions";
-            refreshMissionsButton.tooltip = "Will clear, ensure max and start missions in that order";
-            root.Add(refreshMissionsButton);
-
             return root;
         }
 
@@ -50,18 +41,6 @@ namespace Missions.Editor
         private void ClearMissions()
         {
             _missionManager.ClearMissions();
-        }
-
-        private void EnsureMaxMissions()
-        {
-            _missionManager.EnsureMaxMission();
-        }
-
-        private void RefreshMissions()
-        {
-            ClearMissions();
-            EnsureMaxMissions();
-            StartMissions();
         }
     }
 }

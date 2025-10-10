@@ -7,17 +7,13 @@ using Utils.Extensions;
 
 namespace Missions
 {
+    /// <summary>
+    /// Controls the logic of how to create, start and end missions.
+    /// </summary>
     public class MissionsManager : MonoBehaviour
     {
         [SerializeField] private MissionsSerializableState _currentMissions;
         public MissionsSerializableState CurrentMissions => _currentMissions;
-
-        [SerializeField] private MissionsPoolData _missionsPool;
-        public MissionsPoolData MissionsPool => _missionsPool;
-
-        [SerializeField] private SerializableValueCallback<int> _maxMissions;
-        [SerializeField] private bool _createNewOnCompleted;
-        [SerializeField] private bool _removeFromListOnCompleted = true;
 
         enum StartMissionsMode
         {
@@ -27,12 +23,9 @@ namespace Missions
 
         public Action<MissionData> OnBeforeMissionInitialized { get; set; }
 
-        [SerializeField] private UnityEvent _onMissionCompleted;
-        public UnityEvent OnMissionCompleted => _onMissionCompleted;
+        [SerializeField] private UnityEvent<MissionData> _onMissionCompleted;
+        public UnityEvent<MissionData> OnMissionCompleted => _onMissionCompleted;
         
-        [SerializeField] private UnityEvent<MissionData> _onMissionCompletedWithArg;
-        public UnityEvent<MissionData> OnMissionCompletedWithArg => _onMissionCompletedWithArg;
-
         private void Awake()
         {
             if (_startMissionsMode == StartMissionsMode.Awake)
@@ -66,43 +59,12 @@ namespace Missions
             _currentMissions.Clear();
         }
 
-        /// <summary>
-        /// Create new missions up to _maxMissions value
-        /// </summary>
-        public void EnsureMaxMission()
-        {
-            var missing = _maxMissions.Value - _currentMissions.Missions.Count;
-            CreateNewRandomMissions(missing);
-        }
-
         public void CreateMissionsFromAssets(List<MissionData> missionAssets)
         {
             foreach (var missionAsset in missionAssets)
             {
                 CreateNewMissionFromAsset(missionAsset);
             }
-        }
-
-        public void StartMissions()
-        {
-            foreach (var serializableMission in _currentMissions.Missions)
-            {
-                StartMission(serializableMission.Mission);
-            }
-        }
-
-        private void CreateNewRandomMissions(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                CreateNewRandomMission();
-            }
-        }
-
-        private MissionData CreateNewRandomMission()
-        {
-            var missionAsset = _missionsPool.Missions.GetRandom();
-            return CreateNewMissionFromAsset(missionAsset);
         }
 
         public MissionData CreateNewMissionFromAsset(MissionData missionOriginalAsset)
@@ -121,6 +83,14 @@ namespace Missions
             return mission;
         }
 
+        public void StartMissions()
+        {
+            foreach (var serializableMission in _currentMissions.Missions)
+            {
+                StartMission(serializableMission.Mission);
+            }
+        }
+
         private void StartMission(MissionData mission)
         {
             if (mission.IsCompleted) return;  // do not start if already completed
@@ -136,19 +106,7 @@ namespace Missions
             {
                 mission.ApplyReward();
             }
-            _onMissionCompleted.Invoke();
-            _onMissionCompletedWithArg.Invoke(mission);
-
-            if (_removeFromListOnCompleted)
-            {
-                _currentMissions.Remove(mission);
-            }
-            
-            if (_createNewOnCompleted)
-            {
-                var newMission = CreateNewRandomMission();
-                StartMission(newMission);
-            }
+            _onMissionCompleted.Invoke(mission);
         }
     }
 }

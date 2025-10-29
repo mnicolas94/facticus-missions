@@ -28,6 +28,12 @@ namespace Missions
         /// Stop tracking mission completion condition.
         /// </summary>
         void EndMission();
+
+        /// <summary>
+        /// Changes the internal state of the mission so IsCompleted returns true.
+        /// </summary>
+        /// <returns></returns>
+        void ForceCompletion();
     }
     
     /// <summary>

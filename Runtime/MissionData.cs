@@ -63,6 +63,11 @@ namespace Missions
         {
             Mission.EndMission();
         }
+        
+        public void ForceCompletion()
+        {
+            Mission.ForceCompletion();
+        }
 
         public void ApplyReward()
         {

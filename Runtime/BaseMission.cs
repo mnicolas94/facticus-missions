@@ -17,5 +17,7 @@ namespace Missions
         public abstract void StartMission();
 
         public abstract void EndMission();
+        
+        public abstract void ForceCompletion();
     }
 }

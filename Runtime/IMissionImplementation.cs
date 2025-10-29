@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 
 namespace Missions
 {
@@ -26,5 +28,13 @@ namespace Missions
         /// Stop tracking mission completion condition.
         /// </summary>
         void EndMission();
+    }
+    
+    /// <summary>
+    /// Allows mission implementations to provide specific localized variables to use in mission's localized descriptions.
+    /// </summary>
+    public interface IMissionLocalizedVariablesProvider
+    {
+        void AddVariables(List<(string, IVariable)> variables);
     }
 }

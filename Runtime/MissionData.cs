@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
-using Utils.Attributes;
+using UnityEngine.Pool;
 
 namespace Missions
 {
@@ -73,12 +73,33 @@ namespace Missions
         }
 
 #if UNITY_EDITOR
-        
+
         private void OnValidate()
         {
+            var didChange = false;
             if (!_description.ContainsKey(DescriptionSelfKey))
             {
                 _description.Add(DescriptionSelfKey, new ObjectVariable(){ Value = this});
+                didChange = true;
+            }
+            using var _ = ListPool<(string, IVariable)>.Get(out var variables);
+            
+            if (Mission is IMissionLocalizedVariablesProvider provider)
+            {
+                provider.AddVariables(variables);
+                foreach (var (key, variable) in variables)
+                {
+                    if (!_description.TryGetValue(key, out var value) || value != variable)
+                    {
+                        didChange = true;
+                    }
+
+                    _description[key] = variable;
+                }
+            }
+
+            if (didChange)
+            {
                 EditorUtility.SetDirty(this);
             }
         }

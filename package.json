@@ -1,6 +1,6 @@
 {
   "name": "com.facticus.missions",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "displayName": "Missions",
   "description": "Simple missions library",
   "unity": "2022.3",

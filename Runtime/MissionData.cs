@@ -97,9 +97,8 @@ namespace Missions
                     if (!_description.TryGetValue(key, out var value) || value != variable)
                     {
                         didChange = true;
+                        _description[key] = variable;
                     }
-
-                    _description[key] = variable;
                 }
             }
 

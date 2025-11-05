@@ -94,7 +94,7 @@ namespace Missions
                 provider.AddVariables(variables);
                 foreach (var (key, variable) in variables)
                 {
-                    if (!_description.TryGetValue(key, out var value) || value != variable)
+                    if (!_description.TryGetValue(key, out var value) || !AreVariablesEqual(value, variable))
                     {
                         didChange = true;
                         _description[key] = variable;
@@ -108,6 +108,28 @@ namespace Missions
             }
         }
         
+        private bool AreVariablesEqual(IVariable a, IVariable b)
+        {
+            if (a.GetType() != b.GetType()) return false;
+
+            switch (a)
+            {
+                case ObjectVariable objA when b is ObjectVariable objB:
+                    return objA.Value == objB.Value;
+                case StringVariable strA when b is StringVariable strB:
+                    return strA.Value == strB.Value;
+                case IntVariable intA when b is IntVariable intB:
+                    return intA.Value == intB.Value;
+                case FloatVariable floatA when b is FloatVariable floatB:
+                    return Math.Abs(floatA.Value - floatB.Value) < 0.0001f;
+                case LocalizedString localizedStringA when b is LocalizedString localizedStringB:
+                    return localizedStringA.TableReference == localizedStringB.TableReference &&
+                           localizedStringA.TableEntryReference.Equals(localizedStringB.TableEntryReference);
+                // Add more cases as needed for other variable types
+                default:
+                    return a.Equals(b);
+            }
+        }
 #endif
     }
 

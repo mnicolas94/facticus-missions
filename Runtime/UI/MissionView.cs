@@ -106,7 +106,11 @@ namespace Missions.UI
             else
             {
                 _descriptionText.StringReference = model.Description;
-                _rewardView.Initialize(model.Reward);
+
+                if (_rewardView)
+                {
+                    _rewardView.Initialize(model.Reward);
+                }
 
                 // handle completed state
                 UpdateCompletedState(model);

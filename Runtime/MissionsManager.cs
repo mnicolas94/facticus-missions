@@ -91,7 +91,7 @@ namespace Missions
             }
         }
 
-        private void StartMission(MissionData mission)
+        public void StartMission(MissionData mission)
         {
             if (mission.IsCompleted) return;  // do not start if already completed
             

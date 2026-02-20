@@ -94,7 +94,14 @@ namespace Missions
                 provider.AddVariables(variables);
                 foreach (var (key, variable) in variables)
                 {
-                    if (!_description.TryGetValue(key, out var value) || !AreVariablesEqual(value, variable))
+                    var doesKeyExists = _description.TryGetValue(key, out var value);
+                    if (value == null || variable == null)
+                    {
+                        Debug.LogError($"Variable with key '{key}' is null. Skipping.", this);
+                        continue;
+                    }
+
+                    if (!doesKeyExists || !AreVariablesEqual(value, variable))
                     {
                         didChange = true;
                         _description[key] = variable;

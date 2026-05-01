@@ -182,11 +182,11 @@ namespace Missions.UI
         {
             var current = mission.FormatProgressValues(mission.GetCurrentProgress());
             var max = mission.FormatProgressValues(mission.GetMaxProgress());
-            var normalized = mission.GetNormalizedProgress();
+            var normalizedProgress = mission.GetNormalizedProgress();
             
             _progressText.text = string.Format(_progressFormat, current, max);
             var anchorMax = _progressBar.anchorMax;
-            anchorMax.x = normalized;
+            anchorMax.x = normalizedProgress;
             _progressBar.anchorMax = anchorMax;
         }
 

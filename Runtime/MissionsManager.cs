@@ -23,6 +23,9 @@ namespace Missions
 
         public Action<MissionData> OnBeforeMissionInitialized { get; set; }
 
+        [SerializeField] private UnityEvent<MissionData> _missionStarted;
+        public UnityEvent<MissionData> MissionStarted => _missionStarted;
+        
         [SerializeField] private UnityEvent<MissionData> _onMissionCompleted;
         public UnityEvent<MissionData> OnMissionCompleted => _onMissionCompleted;
         
@@ -96,6 +99,7 @@ namespace Missions
             if (mission.IsCompleted) return;  // do not start if already completed
             
             mission.StartMission();
+            _missionStarted.Invoke(mission);
             mission.OnCompleted += () => CompleteMission(mission);
         }
 

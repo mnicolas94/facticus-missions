@@ -12,6 +12,8 @@ namespace Missions.UI
         [SerializeReference, SubclassSelector] private IMissionListSource _missionListSource;
 
         private readonly List<MissionEventsHandler> _missionEventsHandlers = new();
+
+        public Action<IView> MissionViewAdded;
         
         private void Start()
         {
@@ -77,7 +79,8 @@ namespace Missions.UI
 
         private void AddMissionView(MissionData mission)
         {
-            _viewList.Add(mission);
+            var view = _viewList.Add(mission);
+            MissionViewAdded?.Invoke(view);
         }
 
         private void RemoveMissionView(MissionData mission)

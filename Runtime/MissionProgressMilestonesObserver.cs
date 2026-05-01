@@ -75,9 +75,52 @@ namespace Missions
     [Serializable]
     public class MissionMilestones : IDisposable
     {
+        public static string MilestonesModePropertyName => nameof(_milestonesMode);
+        public static string IntervalPropertyName => nameof(_interval);
+        public static string IntervalMilestonePropertyName => nameof(_intervalMilestone);
+        public static string MilestonesPropertyName => nameof(_milestones);
+        
         [SerializeField] public MissionData MissionAsset;
-        [SerializeField] public List<ProgressMilestone> Milestones;
+        
+        public enum MilestonesMode { Interval, Manual }
+        [SerializeField] private MilestonesMode _milestonesMode;
+        public MilestonesMode MilestonesInputMode => _milestonesMode;
 
+        [SerializeField] private float _interval;
+        [SerializeField] private ProgressMilestone _intervalMilestone;
+        
+        [SerializeField] private List<ProgressMilestone> _milestones;
+
+        private  List<ProgressMilestone> _intervalMilestones;
+        
+        public List<ProgressMilestone> Milestones
+        {
+            get
+            {
+                // manual
+                if (_milestonesMode == MilestonesMode.Manual)
+                {
+                    return _milestones;
+                }
+                
+                // interval
+                if (_intervalMilestones == null)
+                {
+                    _intervalMilestones = new List<ProgressMilestone>();
+                    var currentThreshold = _interval;
+                    while (currentThreshold < 1f)
+                    {
+                        var milestone = _intervalMilestone.Clone();
+                        milestone.ProgressThreshold = currentThreshold;
+                        _intervalMilestones.Add(milestone);
+                        currentThreshold += _interval;
+                    }
+                }
+
+                return _intervalMilestones;
+            }
+        }
+        
         public MissionData MissionInstance { get; set; }
         public IMissionProgress MissionProgress { get; set; }
         public float LastTrackedProgress { get; set; }
@@ -128,5 +171,16 @@ namespace Missions
         [Header("UI")]
         [SerializeField] public RectTransform IndicatorNotReachedPrefabOverride;
         [SerializeField] public RectTransform IndicatorReachedPrefabOverride;
+
+        public ProgressMilestone Clone()
+        {
+            return new ProgressMilestone()
+            {
+                ProgressThreshold = ProgressThreshold,
+                Reached = Reached,
+                IndicatorNotReachedPrefabOverride = IndicatorNotReachedPrefabOverride,
+                IndicatorReachedPrefabOverride = IndicatorReachedPrefabOverride
+            };
+        }
     }
 }

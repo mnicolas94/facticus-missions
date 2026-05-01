@@ -47,6 +47,8 @@ namespace Missions
             get => Mission.OnCompleted;
             set => Mission.OnCompleted = value;
         }
+
+        private bool _isStarted;
         
         public void Initialize()
         {
@@ -56,12 +58,16 @@ namespace Missions
 
         public void StartMission()
         {
+            if (_isStarted) return;
+            
             Mission.StartMission();
+            _isStarted = true;
         }
 
         public void EndMission()
         {
             Mission.EndMission();
+            _isStarted = false;
         }
         
         public void ForceCompletion()

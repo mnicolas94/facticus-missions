@@ -13,13 +13,24 @@ namespace Missions.UI
 {
     public class MissionView : ViewBaseBehaviour<MissionData>
     {
+        enum ProgressBarImplementation
+        {
+            FillAmount,
+            Grow,  // grows from left to right by changing the anchor max value
+            Move,  // moves the bar from left to right by changing the anchored position. a mask should be used to hide the overflowing part of the bar
+        }
         [SerializeField] private LocalizeStringEvent _descriptionText;
         [SerializeField] private GenericView _rewardView;
         [SerializeField] private Button _claimRewardButton;
         [SerializeField] private GameObject _progress;
         [SerializeField] private TextMeshProUGUI _progressText;
-        [SerializeField] private RectTransform _progressBar;
         [SerializeField] private string _progressFormat = "{0} / {1}";
+
+        [SerializeField] private ProgressBarImplementation _progressBarMode;
+        [Tooltip("Used only for FillAmount mode")]
+        [SerializeField] private Image _progressBarImage;  // used for FillAmount mode
+        [Tooltip("Used only for Grow and Move modes")]
+        [SerializeField] private RectTransform _progressBar;  // used for Grow and Move modes
 
         [SerializeField] private SerializableCallback<CancellationToken, Task> _showAnimation;
         [SerializeField] private SerializableCallback<CancellationToken, Task> _hideAnimation;
@@ -180,14 +191,39 @@ namespace Missions.UI
         
         private void UpdateProgress(IMissionProgress mission)
         {
+            // update text
             var current = mission.FormatProgressValues(mission.GetCurrentProgress());
             var max = mission.FormatProgressValues(mission.GetMaxProgress());
-            var normalizedProgress = mission.GetNormalizedProgress();
-            
             _progressText.text = string.Format(_progressFormat, current, max);
-            var anchorMax = _progressBar.anchorMax;
-            anchorMax.x = normalizedProgress;
-            _progressBar.anchorMax = anchorMax;
+            
+            // update bar
+            var normalizedProgress = mission.GetNormalizedProgress();
+            switch (_progressBarMode)
+            {
+                default:
+                case ProgressBarImplementation.FillAmount:
+                    if (!_progressBarImage) return;
+                    
+                    _progressBarImage.fillAmount = normalizedProgress;
+                    break;
+                case ProgressBarImplementation.Grow:
+                    if (!_progressBar) return;
+                    
+                    var anchorMax = _progressBar.anchorMax;
+                    anchorMax.x = normalizedProgress;
+                    _progressBar.anchorMax = anchorMax;
+                    break;
+                case ProgressBarImplementation.Move:
+                    if (!_progressBar) return;
+                    
+                    var anchMin = _progressBar.anchorMin;
+                    var anchMax = _progressBar.anchorMax;
+                    anchMin.x = normalizedProgress - 1;
+                    anchMax.x = normalizedProgress;
+                    _progressBar.anchorMin = anchMin;
+                    _progressBar.anchorMax = anchMax;
+                    break;
+            }
         }
 
         private void ClaimReward()

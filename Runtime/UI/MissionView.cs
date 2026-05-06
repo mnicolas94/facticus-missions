@@ -35,6 +35,9 @@ namespace Missions.UI
         [SerializeField] private SerializableCallback<CancellationToken, Task> _showAnimation;
         [SerializeField] private SerializableCallback<CancellationToken, Task> _hideAnimation;
 
+        [SerializeField] private UnityEvent<MissionData> _viewUpdated;
+        public UnityEvent<MissionData> ViewUpdated => _viewUpdated;
+        
         [SerializeField] private UnityEvent _onNotCompleteState;
         [SerializeField] private UnityEvent _onCompleteState;
         [SerializeField] private UnityEvent _onRewardNotApplied;
@@ -144,6 +147,7 @@ namespace Missions.UI
             }
             
             _updatingView = false;
+            _viewUpdated.Invoke(model);
         }
 
         private async Task PlayAnimation(SerializableCallback<CancellationToken, Task> animation, CancellationToken ct)

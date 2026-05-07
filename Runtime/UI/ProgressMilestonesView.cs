@@ -43,7 +43,7 @@ namespace Missions.UI
             }
         }
 
-        private void ClearIndicators()
+        public void ClearIndicators()
         {
             foreach (var indicator in _spawnedIndicators)
             {

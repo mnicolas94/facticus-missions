@@ -45,9 +45,11 @@ namespace Missions
             if (view is not MissionView missionView) return;
             
             var missionData = missionView.Model;
-            if (!TryGetMilestonesForMission(missionData, out var missionMilestones)) return;
             
             if (!missionView.TryGetComponent<ProgressMilestonesView>(out var milestonesView)) return;
+            milestonesView.ClearIndicators();
+            
+            if (!TryGetMilestonesForMission(missionData, out var missionMilestones)) return;
             
             milestonesView.SpawnMilestoneIndicators(missionMilestones);
         }
